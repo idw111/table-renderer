@@ -46,17 +46,17 @@ saveImage(canvas, path.join(__dirname, 'example.png'));
 
 ## API
 
--   TableImage()
--   TableImage#render()
--   saveImage()
+-   [TableRenderer()](#tablerenderer)
+-   [TableRenderer#render()](#tablerendererrender)
+-   [saveImage()](#saveimage)
 
-### TableImage
+### TableRenderer
 
 ```javascript
-TableImage({ cellWidth: number, cellHeight: number, offsetLeft: number, offsetTop: number, spacing: number }) => { render: function };
+TableRenderer({ cellWidth: number, cellHeight: number, offsetLeft: number, offsetTop: number, spacing: number }) => { render: function };
 ```
 
-### TableImage#render
+### TableRenderer#render
 
 ```javascript
 render((tables: Object | Array)) => Canvas;
