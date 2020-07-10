@@ -13,8 +13,10 @@ I hope this module will help someone who wants to convert a simple spreadsheet d
 ## Install
 
 ```bash
-npm install table-renderer
+npm install table-renderer canvas
 ```
+
+[node-canvas](https://github.com/Automattic/node-canvas) module is peer-dependency. You have to install it, too.
 
 ## Usage
 
@@ -64,7 +66,7 @@ render((tables: Object | Array)) => Canvas;
 
 tables parameter is either Object or Array. Single table is comprised of title, columns, and dataSource, where title is optional. Parameters of render function resembles ant-design Table paramters.
 
-The function returns Canvas object, which is an instance of node-canvas. So, you can add canvas operations to it.
+The function returns Canvas object, which is an instance of [node-canvas](https://github.com/Automattic/node-canvas). So, you can add canvas operations to it.
 
 ```javascript
 render({
