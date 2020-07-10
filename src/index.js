@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import { createCanvas } from 'canvas';
+import { registerFont, createCanvas } from 'canvas';
 
 const defaultOptions = {
 	cellWidth: 100,
@@ -11,6 +11,9 @@ const defaultOptions = {
 };
 
 const TableRenderer = (options = {}) => {
+	registerFont(path.join(process.cwd(), 'Spoqa-Han-Sans-Regular.ttf'), { family: 'spoqa' });
+	registerFont(path.join(process.cwd(), 'Spoqa-Han-Sans-Bold.ttf'), { family: 'spoqa' });
+
 	const { cellWidth, cellHeight, offsetLeft, offsetTop, spacing } = Object.assign(defaultOptions, options);
 
 	const getWidth = (columns) => columns.reduce((sum, { width = cellWidth }) => sum + width, 0);
