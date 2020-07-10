@@ -46,6 +46,56 @@ const canvas = renderTable({
 saveImage(canvas, path.join(__dirname, 'example.png'));
 ```
 
+![single table](example.png)
+
+You can pass multiple table data as Array.
+
+```javascript
+import path from 'path';
+import TableRenderer, { saveImage } from 'table-renderer';
+
+const renderTable = TableRenderer().render;
+
+const canvas = renderTable([
+	{
+		title: 'Revenue by Country',
+		columns: [
+			{ width: 200, title: 'Country', dataIndex: 'country' },
+			{ width: 100, title: 'Users', dataIndex: 'users', align: 'right', prefix: '$ ' },
+			{ width: 100, title: 'Revenue', dataIndex: 'revenue', align: 'right' },
+		],
+		dataSource: [
+			'-',
+			{ country: 'United States', users: '1,230', revenue: '328,300' },
+			{ country: 'Mexico', users: '418', revenue: '100,020' },
+			{ country: 'Japan', users: '190', revenue: '1,200' },
+			'-',
+			{ country: 'Total', users: '1,838', revenue: '429,520' },
+		],
+	},
+	{
+		title: 'Marketing Campaigns',
+		columns: [
+			{ width: 200, title: 'Campaign', dataIndex: 'campaign' },
+			{ width: 100, title: 'Install', dataIndex: 'install', align: 'right' },
+			{ width: 100, title: 'Cost', dataIndex: 'cost', align: 'right' },
+		],
+		dataSource: [
+			'-',
+			{ campaign: 'Google CPC', install: '12', cost: '$ 400' },
+			{ campaign: 'Facebook CPC', install: '3', cost: '$ 60' },
+			{ campaign: 'Youtube Video', install: '131', cost: '$ 1,230' },
+			'-',
+			{ campaign: 'Total', install: '146', cost: '$ 1,690' },
+		],
+	},
+]);
+
+saveImage(canvas, path.join(__dirname, 'example.png'));
+```
+
+![multiple tables](example2.png)
+
 ## API
 
 -   [TableRenderer()](#tablerenderer)
