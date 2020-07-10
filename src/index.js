@@ -8,17 +8,16 @@ const defaultOptions = {
 	offsetLeft: 8,
 	offsetTop: 26,
 	spacing: 40,
+	fontFamily: 'sans-serif',
 };
 
 const TableRenderer = (options = {}) => {
-	registerFont(path.join(process.cwd(), 'Spoqa-Han-Sans-Regular.ttf'), { family: 'spoqa' });
-	registerFont(path.join(process.cwd(), 'Spoqa-Han-Sans-Bold.ttf'), { family: 'spoqa' });
+	const { cellWidth, cellHeight, offsetLeft, offsetTop, spacing, fontFamily } = Object.assign(defaultOptions, options);
 
-	const { cellWidth, cellHeight, offsetLeft, offsetTop, spacing } = Object.assign(defaultOptions, options);
+	const getWidth = (columns) => columns?.reduce((sum, { width = cellWidth }) => sum + width, 0) ?? cellWidth;
 
-	const getWidth = (columns) => columns.reduce((sum, { width = cellWidth }) => sum + width, 0);
-
-	const getHeight = (title, dataSource) => (title ? cellHeight : 0) + cellHeight + dataSource.reduce((height, row) => height + (row === '-' ? 1 : cellHeight), 0);
+	const getHeight = (title, columns, dataSource) =>
+		(title ? cellHeight : 0) + (columns?.length > 0 ? cellHeight : 0) + (dataSource?.reduce((height, row) => height + (row === '-' ? 1 : cellHeight), 0) ?? 0);
 
 	const renderBackground = (ctx, width, height) => {
 		ctx.fillStyle = '#ffffff';
@@ -28,7 +27,7 @@ const TableRenderer = (options = {}) => {
 
 	const renderHorizontalLines = (ctx) => (dataSource, { y, width }) => {
 		ctx.strokeStyle = '#000000';
-		dataSource.forEach((row, i) => {
+		dataSource?.forEach((row, i) => {
 			if (row !== '-') return;
 			ctx.moveTo(0, y[i]);
 			ctx.lineTo(width, y[i]);
@@ -36,26 +35,26 @@ const TableRenderer = (options = {}) => {
 		});
 	};
 
-	const renderTitle = (ctx) => (title, { top }) => {
-		ctx.font = 'bold 24px sans-serif';
-		ctx.fillStyle = '#000000';
-		ctx.textAlign = 'left';
-		ctx.fillText(title, offsetLeft, top + offsetTop);
+	const renderTitle = (ctx) => (title, titleStyle = {}, { top }) => {
+		ctx.font = titleStyle.font ?? `bold 24px ${fontFamily}`;
+		ctx.fillStyle = titleStyle?.fillStyle ?? '#000000';
+		ctx.textAlign = titleStyle?.textAlign ?? 'left';
+		ctx.fillText(title, offsetLeft, top + offsetTop + (titleStyle?.offsetTop ?? 0));
 	};
 
 	const renderHeader = (ctx) => (columns, { x, y }) => {
-		ctx.font = 'normal 16px sans-serif';
+		ctx.font = `normal 16px ${fontFamily}`;
 		ctx.fillStyle = '#333333';
-		columns.forEach(({ title, width = cellWidth, align = 'left' }, i) => {
+		columns?.forEach(({ title, width = cellWidth, align = 'left' }, i) => {
 			ctx.textAlign = align;
 			ctx.fillText(title, x[i] + (align === 'right' ? width - offsetLeft : offsetLeft), y[0] - cellHeight + offsetTop);
 		});
 	};
 
 	const renderRows = (ctx) => (columns, dataSource, { x, y }) => {
-		dataSource.forEach((row, i) => {
+		dataSource?.forEach((row, i) => {
 			if (row === '-') return;
-			columns.forEach(({ width = cellWidth, dataIndex, align = 'left', prefix = '', suffix = '' }, j) => {
+			columns?.forEach(({ width = cellWidth, dataIndex, align = 'left', prefix = '', suffix = '' }, j) => {
 				if (!row[dataIndex]) return;
 				const content = prefix + row[dataIndex] + suffix;
 				ctx.textAlign = align;
@@ -64,24 +63,27 @@ const TableRenderer = (options = {}) => {
 		});
 	};
 
-	const renderTable = ({ title, columns, dataSource }, { ctx, width, height, top = 0 }) => {
+	const renderTable = ({ title, titleStyle = {}, columns, dataSource }, { ctx, width, height, top = 0 }) => {
 		const info = {
 			width,
 			height,
 			top,
-			x: new Array(columns.length).fill().map((_, i) => columns.reduce((x, { width = cellWidth }, j) => x + (j >= i ? 0 : width), 0)),
-			y: new Array(dataSource.length).fill().map((_, i) => top + (title ? cellHeight : 0) + cellHeight + dataSource.reduce((y, row, j) => y + (j >= i ? 0 : row === '-' ? 1 : cellHeight), 0)),
+			x: new Array(columns?.length ?? 0).fill().map((_, i) => columns?.reduce((x, { width = cellWidth }, j) => x + (j >= i ? 0 : width), 0)),
+			y: new Array(dataSource?.length ?? 0)
+				.fill()
+				.map((_, i) => top + (title ? cellHeight : 0) + cellHeight + dataSource?.reduce((y, row, j) => y + (j >= i ? 0 : row === '-' ? 1 : cellHeight), 0)),
 		};
 		renderHorizontalLines(ctx)(dataSource, info);
-		renderTitle(ctx)(title, info);
+		renderTitle(ctx)(title, titleStyle, info);
 		renderHeader(ctx)(columns, info);
 		renderRows(ctx)(columns, dataSource, info);
 	};
 
 	const renderTables = (tables, { ctx, width, height }) => {
-		tables.forEach(({ title, columns, dataSource }, i) => {
-			const top = tables.reduce((top, { title, dataSource }, j) => top + (j >= i ? 0 : getHeight(title, dataSource)), 0) + i * spacing;
-			renderTable({ title, columns, dataSource }, { ctx, width: getWidth(columns), height: getHeight(title, dataSource), top });
+		tables.forEach((table, i) => {
+			const { title, columns, dataSource } = table;
+			const top = tables.reduce((top, { title, columns, dataSource }, j) => top + (j >= i ? 0 : getHeight(title, columns, dataSource)), 0) + i * spacing;
+			renderTable(table, { ctx, width: getWidth(columns), height: getHeight(title, columns, dataSource), top });
 		});
 	};
 
@@ -89,7 +91,7 @@ const TableRenderer = (options = {}) => {
 		if (!Array.isArray(tables)) {
 			const { title, columns, dataSource } = tables;
 			const width = getWidth(columns);
-			const height = getHeight(title, dataSource);
+			const height = getHeight(title, columns, dataSource);
 			const canvas = createCanvas(width, height);
 			const ctx = canvas.getContext('2d');
 			renderBackground(ctx, width, height);
@@ -97,7 +99,7 @@ const TableRenderer = (options = {}) => {
 			return canvas;
 		} else {
 			const width = tables.reduce((maxWidth, { columns }) => Math.max(getWidth(columns), maxWidth), 0);
-			const height = tables.reduce((height, { title, dataSource }) => height + getHeight(title, dataSource), 0) + (tables.length - 1) * spacing;
+			const height = tables.reduce((height, { title, columns, dataSource }) => height + getHeight(title, columns, dataSource), 0) + (tables.length - 1) * spacing;
 			const canvas = createCanvas(width, height);
 			const ctx = canvas.getContext('2d');
 			renderBackground(ctx, width, height);

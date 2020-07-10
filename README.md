@@ -20,6 +20,8 @@ npm install table-renderer canvas
 
 ## Usage
 
+### Single Table
+
 ```javascript
 import path from 'path';
 import TableRenderer, { saveImage } from 'table-renderer';
@@ -47,6 +49,8 @@ saveImage(canvas, path.join(__dirname, 'example.png'));
 ```
 
 ![single table](example.png)
+
+### Multiple Tables
 
 You can pass multiple table data as Array.
 
@@ -92,6 +96,26 @@ const canvas = renderTable([
 ]);
 
 saveImage(canvas, path.join(__dirname, 'example.png'));
+```
+
+### Custom Fonts
+
+```javascript
+import path from 'path';
+import { registerFont } from 'canvas';
+
+registerFont(path.join(__dirname, 'fonts/lato-regular.ttf'), { family: 'lato', weight: 'normal' });
+
+const renderTable = TableRenderer({ fontFamily: 'lato' }).render;
+
+const canvas = renderTable([
+	{
+		title: 'Table with Custom Font',
+        titleStyle: { font: 'normal 24px roboto' },
+        columns: [...],
+        dataSource: [...]
+	},
+]);
 ```
 
 ![multiple tables](example2.png)
