@@ -10,7 +10,7 @@ const defaultOptions = {
 	spacing: 40,
 };
 
-const TableImage = (options = {}) => {
+const TableRenderer = (options = {}) => {
 	const { cellWidth, cellHeight, offsetLeft, offsetTop, spacing } = Object.assign(defaultOptions, options);
 
 	const getWidth = (columns) => columns.reduce((sum, { width = cellWidth }) => sum + width, 0);
@@ -106,7 +106,7 @@ const TableImage = (options = {}) => {
 	return { render };
 };
 
-export default TableImage;
+export default TableRenderer;
 
 export const saveImage = async (canvas, filepath) => {
 	await new Promise((resolve, reject) => {
