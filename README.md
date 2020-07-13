@@ -20,12 +20,12 @@ npm install table-renderer canvas
 
 ## Examples
 
--   [Single Table](./examples/single-table/README.md)
--   [Multiple Tables](./examples/multiple-tables/README.md)
--   [Styling Title](./examples/styling-title/README.md)
--   Horizontal and Vertical Lines
--   Horizontal and Vertical Padding
--   Custom Font
+-   [Single Table](./examples/single-table)
+-   [Multiple Tables](./examples/multiple-tables)
+-   [Styling Title](./examples/styling-title)
+-   [Horizontal and Vertical Lines](./examples/lines)
+-   [Horizontal and Vertical Padding](./examples/padding)
+-   [Custom Font](./examples/custom-font)
 
 ## Usage
 

@@ -12,10 +12,11 @@ const defaultOptions = {
 	fontFamily: 'sans-serif',
 	paddingVertical: 0,
 	paddingHorizontal: 0,
+	backgroundColor: '#ffffff',
 };
 
 const TableRenderer = (options = {}) => {
-	const { cellWidth, cellHeight, offsetLeft, offsetTop, spacing, titleSpacing, fontFamily, paddingHorizontal, paddingVertical } = Object.assign(defaultOptions, options);
+	const { cellWidth, cellHeight, offsetLeft, offsetTop, spacing, titleSpacing, fontFamily, paddingHorizontal, paddingVertical, backgroundColor } = Object.assign(defaultOptions, options);
 
 	const getTableWidth = (columns) => {
 		return columns?.reduce((sum, col) => sum + (col === '|' ? 1 : col.width ?? cellWidth), 0) ?? cellWidth;
@@ -29,8 +30,8 @@ const TableRenderer = (options = {}) => {
 	};
 
 	const renderBackground = (ctx, width, height) => {
-		ctx.fillStyle = '#ffffff';
-		ctx.strokeStyle = '#ffffff';
+		ctx.fillStyle = backgroundColor;
+		ctx.strokeStyle = backgroundColor;
 		ctx.fillRect(-10, -10, width + 10, height + 10);
 	};
 
