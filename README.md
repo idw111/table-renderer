@@ -66,8 +66,21 @@ saveImage(canvas, path.join(__dirname, 'example.png'));
 ### TableRenderer
 
 ```javascript
-TableRenderer({ cellWidth: number, cellHeight: number, offsetLeft: number, offsetTop: number, spacing: number }) => { render: function };
+TableRenderer(options = {}) => ({ render: function });
 ```
+
+#### options
+
+-   `cellWidth` {number} default width for a table cell. default = 100
+-   `cellHeight` {number} default height for a table cell. default = 40
+-   `offsetLeft` {number} default text offset from left border of table cell. default = 8
+-   `offsetTop` {number} default text offset from top border of table cell. default = 26
+-   `spacing` {number} spacing between tables. default = 20
+-   `titleSpacing` {number} spacing between title and a table. default = 10
+-   `fontFamily` {string} default = 'sans-serif'
+-   `paddingVertical` {number} vertical padding of a page. default = 0
+-   `paddingHorizontal` {number} horizontal padding of a page. default = 0
+-   `backgroundColor` {string} page background color. default = '#ffffff'
 
 ### TableRenderer#render
 
