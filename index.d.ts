@@ -14,9 +14,10 @@ export interface TableRendererOptions {
 }
 
 export type Column = '|' | {
-	width?: number,
-	title: string,
+	width   ?: number,
+	title    : string,
 	dataIndex: string,
+	align   ?: CanvasTextAlign,
 };
 
 export type Row = '-' | {
@@ -35,7 +36,6 @@ export interface Table {
 	titleStyle?: TitleStyle;
 	columns    : Column[];
 	dataSource : Row[];
-	align     ?: CanvasTextAlign;
 }
 
 export type RenderFunction = (tables: Table | Table[]) => Canvas;
