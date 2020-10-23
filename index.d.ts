@@ -10,7 +10,7 @@ export interface TableRendererOptions {
 	fontFamily       ?: string;
 	paddingVertical  ?: number;
 	paddingHorizontal?: number;
-	backgroundColor  ?: string;
+	backgroundColor  ?: string | CanvasGradient | CanvasPattern;
 }
 
 export type Column = '|' | {
@@ -23,10 +23,19 @@ export type Row = '-' | {
 	[key: string]: string,
 };
 
+export interface TitleStyle {
+	font     ?: string;
+	fillStyle?: string | CanvasGradient | CanvasPattern;
+	textAlign?: CanvasTextAlign;
+	offsetTop?: number;
+}
+
 export interface Table {
-	title?: string;
-	columns: Column[];
-	dataSource: Row[];
+	title     ?: string;
+	titleStyle?: TitleStyle;
+	columns    : Column[];
+	dataSource : Row[];
+	align     ?: CanvasTextAlign;
 }
 
 export type RenderFunction = (tables: Table | Table[]) => Canvas;
@@ -35,4 +44,4 @@ declare function TableRenderer (options?: TableRendererOptions): { render: Rende
 declare function saveImage (canvas: Canvas, filepath: string): Promise<void>;
 
 export default TableRenderer;
-export { saveImage }
+export { saveImage };
