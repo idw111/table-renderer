@@ -1,6 +1,6 @@
 {
 	"name": "table-renderer",
-	"version": "0.1.25",
+	"version": "0.1.26",
 	"description": "convert table or spreadsheet data into an image",
 	"main": "./lib/index.js",
 	"files": [
