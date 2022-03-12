@@ -3,8 +3,10 @@
 	"version": "0.1.26",
 	"description": "convert table or spreadsheet data into an image",
 	"main": "./lib/index.js",
+	"types": "index.d.ts",
 	"files": [
-		"/lib"
+		"/lib",
+		"index.d.ts"
 	],
 	"scripts": {
 		"clean": "rimraf lib",
