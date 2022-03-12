@@ -1,6 +1,6 @@
 {
 	"name": "table-renderer",
-	"version": "0.1.26",
+	"version": "0.1.27",
 	"description": "convert table or spreadsheet data into an image",
 	"main": "./lib/index.js",
 	"types": "index.d.ts",
@@ -29,7 +29,7 @@
 	"author": "Dongwon Lim",
 	"license": "MIT",
 	"peerDependencies": {
-		"canvas": "^2.6.1"
+		"canvas": "^2.9.0"
 	},
 	"devDependencies": {
 		"@babel/cli": "^7.10.4",
@@ -37,9 +37,9 @@
 		"@babel/polyfill": "^7.10.4",
 		"@babel/preset-env": "^7.10.4",
 		"@babel/register": "^7.10.4",
-		"canvas": "^2.6.1",
+		"canvas": "^2.9.0",
 		"rimraf": "^3.0.2",
 		"webpack": "^4.43.0",
-		"webpack-cli": "^3.3.12"
+		"webpack-cli": "^4.9.2"
 	}
 }
