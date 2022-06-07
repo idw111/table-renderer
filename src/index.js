@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import { registerFont, createCanvas } from 'canvas';
+import { createCanvas } from 'canvas';
 
 const defaultOptions = {
 	cellWidth: 100,
@@ -24,7 +24,7 @@ const TableRenderer = (options = {}) => {
 
 	const getTableHeight = (title, columns, dataSource) => {
 		const titleHeight = title ? cellHeight + titleSpacing : 0;
-		const headerHeight = columns?.length > 0 ? cellHeight : 0;
+		const headerHeight = !columns?.length || columns.every((col) => !col.title) ? 0 : cellHeight;
 		const bodyHeight = dataSource?.reduce((height, row) => height + (row === '-' ? 1 : cellHeight), 0) ?? 0;
 		return titleHeight + headerHeight + bodyHeight;
 	};
@@ -35,58 +35,68 @@ const TableRenderer = (options = {}) => {
 		ctx.fillRect(-10, -10, width + 10, height + 10);
 	};
 
-	const renderHorizontalLines = (ctx) => (dataSource, { x, y, width }) => {
-		ctx.strokeStyle = '#000000';
-		dataSource?.forEach((row, i) => {
-			if (row !== '-') return;
-			ctx.moveTo(paddingHorizontal, y[i]);
-			ctx.lineTo(paddingHorizontal + width, y[i]);
-			ctx.stroke();
-		});
-	};
-
-	const renderVerticalLines = (ctx) => (title, columns, { x, y, height }) => {
-		ctx.strokeStyle = '#000000';
-		const titleHeight = title ? cellHeight + titleSpacing : 0;
-		columns?.forEach((col, i) => {
-			if (col !== '|') return;
-			const headerHeight = cellHeight;
-			ctx.moveTo(x[i], y[0] - headerHeight);
-			ctx.lineTo(x[i], y[0] - headerHeight + height - titleHeight);
-			ctx.stroke();
-		});
-	};
-
-	const renderTitle = (ctx) => (title, titleStyle = {}, { top, x }) => {
-		if (!title) return;
-		ctx.font = titleStyle.font ?? `bold 24px ${fontFamily}`;
-		ctx.fillStyle = titleStyle?.fillStyle ?? '#000000';
-		ctx.textAlign = titleStyle?.textAlign ?? 'left';
-		ctx.fillText(title, paddingHorizontal + offsetLeft, top + offsetTop + (titleStyle?.offsetTop ?? 0));
-	};
-
-	const renderHeader = (ctx) => (columns, { x, y }) => {
-		ctx.font = `normal 16px ${fontFamily}`;
-		ctx.fillStyle = '#333333';
-		columns?.forEach((col, i) => {
-			if (typeof col != 'object') return;
-			const { title, width = cellWidth, align = 'left' } = col;
-			ctx.textAlign = align;
-			ctx.fillText(title, x[i] + (align === 'right' ? width - offsetLeft : offsetLeft), y[0] - cellHeight + offsetTop);
-		});
-	};
-
-	const renderRows = (ctx) => (columns, dataSource, { x, y }) => {
-		dataSource?.forEach((row, i) => {
-			if (row === '-') return;
-			columns?.forEach(({ width = cellWidth, dataIndex, align = 'left', prefix = '', suffix = '' }, j) => {
-				if (!row[dataIndex]) return;
-				const content = prefix + row[dataIndex] + suffix;
-				ctx.textAlign = align;
-				ctx.fillText(content, x[j] + (align === 'right' ? width - offsetLeft : offsetLeft), y[i] + offsetTop, width - 2 * offsetLeft);
+	const renderHorizontalLines =
+		(ctx) =>
+		(dataSource, { x, y, width }) => {
+			ctx.strokeStyle = '#000000';
+			dataSource?.forEach((row, i) => {
+				if (row !== '-') return;
+				ctx.moveTo(paddingHorizontal, y[i]);
+				ctx.lineTo(paddingHorizontal + width, y[i]);
+				ctx.stroke();
 			});
-		});
-	};
+		};
+
+	const renderVerticalLines =
+		(ctx) =>
+		(title, columns, { x, y, height }) => {
+			ctx.strokeStyle = '#000000';
+			const titleHeight = title ? cellHeight + titleSpacing : 0;
+			columns?.forEach((col, i) => {
+				if (col !== '|') return;
+				const headerHeight = col.title ? cellHeight : 0;
+				ctx.moveTo(x[i], y[0] - headerHeight);
+				ctx.lineTo(x[i], y[0] - headerHeight + height - titleHeight);
+				ctx.stroke();
+			});
+		};
+
+	const renderTitle =
+		(ctx) =>
+		(title, titleStyle = {}, { top, x }) => {
+			if (!title) return;
+			ctx.font = titleStyle.font ?? `bold 24px ${fontFamily}`;
+			ctx.fillStyle = titleStyle?.fillStyle ?? '#000000';
+			ctx.textAlign = titleStyle?.textAlign ?? 'left';
+			ctx.fillText(title, paddingHorizontal + offsetLeft, top + offsetTop + (titleStyle?.offsetTop ?? 0));
+		};
+
+	const renderHeader =
+		(ctx) =>
+		(columns, { x, y }) => {
+			ctx.font = `normal 16px ${fontFamily}`;
+			ctx.fillStyle = '#333333';
+			columns?.forEach((col, i) => {
+				if (typeof col != 'object' || !col.title) return;
+				const { title, width = cellWidth, align = 'left' } = col;
+				ctx.textAlign = align;
+				ctx.fillText(title, x[i] + (align === 'right' ? width - offsetLeft : offsetLeft), y[0] - cellHeight + offsetTop);
+			});
+		};
+
+	const renderRows =
+		(ctx) =>
+		(columns, dataSource, { x, y }) => {
+			dataSource?.forEach((row, i) => {
+				if (row === '-') return;
+				columns?.forEach(({ width = cellWidth, dataIndex, align = 'left', prefix = '', suffix = '' }, j) => {
+					if (!row[dataIndex]) return;
+					const content = prefix + row[dataIndex] + suffix;
+					ctx.textAlign = align;
+					ctx.fillText(content, x[j] + (align === 'right' ? width - offsetLeft : offsetLeft), y[i] + offsetTop, width - 2 * offsetLeft);
+				});
+			});
+		};
 
 	const renderTable = ({ title, titleStyle = {}, columns, dataSource }, { ctx, width, height, top = paddingVertical }) => {
 		const info = {
@@ -96,7 +106,7 @@ const TableRenderer = (options = {}) => {
 			x: new Array(columns?.length ?? 0).fill().map((_, i) => paddingHorizontal + columns?.reduce((x, col, j) => x + (j >= i ? 0 : col === '|' ? 1 : col.width ?? cellWidth), 0)),
 			y: new Array(dataSource?.length ?? 0).fill().map((_, i) => {
 				const titleHeight = title ? cellHeight + titleSpacing : 0;
-				const headerHeight = columns?.length > 0 ? cellHeight : 0;
+				const headerHeight = !columns?.length || columns.every((col) => !col.title) ? 0 : cellHeight;
 				return top + titleHeight + headerHeight + dataSource?.reduce((y, row, j) => y + (j >= i ? 0 : row === '-' ? 1 : cellHeight), 0);
 			}),
 		};
