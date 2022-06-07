@@ -52,9 +52,9 @@ const TableRenderer = (options = {}) => {
 		(title, columns, { x, y, height }) => {
 			ctx.strokeStyle = '#000000';
 			const titleHeight = title ? cellHeight + titleSpacing : 0;
+			const headerHeight = !columns?.length || columns.every((col) => !col.title) ? 0 : cellHeight;
 			columns?.forEach((col, i) => {
 				if (col !== '|') return;
-				const headerHeight = col.title ? cellHeight : 0;
 				ctx.moveTo(x[i], y[0] - headerHeight);
 				ctx.lineTo(x[i], y[0] - headerHeight + height - titleHeight);
 				ctx.stroke();
