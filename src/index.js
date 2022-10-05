@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import { createCanvas } from 'canvas';
 
-const defaultOptions = {
+const defaultOptions = Object.freeze({
 	cellWidth: 100,
 	cellHeight: 40,
 	offsetLeft: 8,
@@ -13,10 +13,10 @@ const defaultOptions = {
 	paddingVertical: 0,
 	paddingHorizontal: 0,
 	backgroundColor: '#ffffff',
-};
+});
 
 const TableRenderer = (options = {}) => {
-	const { cellWidth, cellHeight, offsetLeft, offsetTop, spacing, titleSpacing, fontFamily, paddingHorizontal, paddingVertical, backgroundColor } = Object.assign(defaultOptions, options);
+	const { cellWidth, cellHeight, offsetLeft, offsetTop, spacing, titleSpacing, fontFamily, paddingHorizontal, paddingVertical, backgroundColor } = {...defaultOptions, ...options};
 
 	const getTableWidth = (columns) => {
 		return columns?.reduce((sum, col) => sum + (col === '|' ? 1 : col.width ?? cellWidth), 0) ?? cellWidth;
