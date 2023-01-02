@@ -39,7 +39,7 @@
 		"@babel/register": "^7.10.4",
 		"canvas": "^2.9.0",
 		"rimraf": "^3.0.2",
-		"webpack": "^4.43.0",
+		"webpack": "^5.75.0",
 		"webpack-cli": "^4.9.2"
 	}
 }
