@@ -55,6 +55,14 @@ const canvas = renderTable({
 saveImage(canvas, path.join(__dirname, 'example.png'));
 ```
 
+## CommonJS
+```javascript
+const path = require('path');
+const TableRenderer = require('table-renderer');
+const {saveImage} = TableRenderer;
+const renderTable = TableRenderer.default().render;
+```
+
 ![single table](example.png)
 
 ## API
